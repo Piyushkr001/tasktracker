@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Ubuntu_Sans } from "next/font/google";
 import "./globals.css";
+import ClientProviders from "./Provider";
+import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/sooner";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+
+
+const ubuntuSans = Ubuntu_Sans({
   subsets: ["latin"],
+  weight: ["300", "400", "500", "700"],
 });
 
 export const metadata: Metadata = {
@@ -23,11 +24,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
+        className={cn("min-h-screen bg-background font-sans antialiased", ubuntuSans.className)}
       >
-        {children}
+        <ClientProviders>
+          {children}
+        </ClientProviders>
+        <Toaster/>
       </body>
     </html>
   );
