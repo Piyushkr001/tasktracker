@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { toast } from 'sonner'
+import { toast } from 'react-hot-toast'
 import axios from 'axios'
 import Script from 'next/script'
 import { Eye, EyeOff } from 'lucide-react'
@@ -17,6 +17,18 @@ export default function SignUpPage() {
   const googleBtnRef = useRef<HTMLDivElement>(null)
 
   const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
+
+  // ── Already logged in guard ───────────────────────────────────────────────
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      toast.success('You are already signed in.', {
+        duration: 3000,
+      })
+      router.replace('/dashboard')
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const setAuthToken = (token: string) => {
     localStorage.setItem('token', token)

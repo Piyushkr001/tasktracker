@@ -1,33 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// Routes that require authentication
+// Routes that require authentication — unauthenticated users are redirected to /sign-in
 const PROTECTED_ROUTES = ['/dashboard']
-
-// Routes only for unauthenticated users (redirect to dashboard if already logged in)
-const AUTH_ROUTES = ['/sign-in', '/sign-up']
 
 export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl
   const token = req.cookies.get('token')?.value
 
   const isProtected = PROTECTED_ROUTES.some((route) => pathname.startsWith(route))
-  const isAuthRoute = AUTH_ROUTES.some((route) => pathname.startsWith(route))
 
-  // Redirect unauthenticated users away from protected routes
+  // Only block access to protected routes when no token cookie is present.
+  // We do NOT redirect authenticated users away from /sign-in or /sign-up here —
+  // those pages handle it client-side to avoid cookie sync issues on logout.
   if (isProtected && !token) {
     const signInUrl = new URL('/sign-in', req.url)
     signInUrl.searchParams.set('redirect_url', pathname)
     return NextResponse.redirect(signInUrl)
   }
 
-  // Redirect authenticated users away from auth routes
-  if (isAuthRoute && token) {
-    return NextResponse.redirect(new URL('/dashboard', req.url))
-  }
-
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/sign-in', '/sign-up'],
+  // Only run on dashboard routes — no longer runs on /sign-in or /sign-up
+  matcher: ['/dashboard/:path*'],
 }
