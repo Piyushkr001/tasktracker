@@ -1,10 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { Github, Twitter, Linkedin, Facebook, InstagramIcon } from 'lucide-react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXTwitter } from "@fortawesome/free-brands-svg-icons";
 import Image from 'next/image';
+import { FacebookLogoIcon, GithubLogoIcon, InstagramLogoIcon, LinkedinLogoIcon } from '@phosphor-icons/react';
 
 export default function Footer() {
   return (
@@ -36,19 +36,19 @@ export default function Footer() {
         {/* Social Icons */}
         <div className="flex item-center gap-4">
           <Link href="https://github.com" target="_blank" aria-label="GitHub">
-            <Github className="h-5 w-5 hover:text-blue-600 dark:hover:text-blue-400 transition" />
+            <GithubLogoIcon className="h-5 w-5 hover:text-blue-600 dark:hover:text-blue-400 transition" />
           </Link>
           <Link href="https://x.com/" target="_blank" aria-label="Twitter">
              <FontAwesomeIcon icon={faXTwitter} className="h-5 w-5 hover:text-blue-600 dark:hover:text-blue-400 transition"/> 
           </Link>
           <Link href="https://Facebook.com/" target="_blank" aria-label="Twitter">
-             <Facebook className="h-5 w-5 hover:text-blue-600 dark:hover:text-blue-400 transition"/> 
+             <FacebookLogoIcon className="h-5 w-5 hover:text-blue-600 dark:hover:text-blue-400 transition"/> 
           </Link>
           <Link href="https://Instagram.com/" target="_blank" aria-label="Twitter">
-             <InstagramIcon className="h-5 w-5 hover:text-blue-600 dark:hover:text-blue-400 transition"/> 
+             <InstagramLogoIcon className="h-5 w-5 hover:text-blue-600 dark:hover:text-blue-400 transition"/> 
           </Link>
           <Link href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
-            <Linkedin className="h-5 w-5 hover:text-blue-600 dark:hover:text-blue-400 transition" />
+            <LinkedinLogoIcon className="h-5 w-5 hover:text-blue-600 dark:hover:text-blue-400 transition" />
           </Link>
         </div>
       </div>

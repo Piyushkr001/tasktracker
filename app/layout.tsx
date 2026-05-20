@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-import { Ubuntu_Sans } from "next/font/google";
+import { Ubuntu_Sans, Geist } from "next/font/google";
 import "./globals.css";
 import ClientProviders from "./Provider";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sooner";
 
-
-
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const ubuntuSans = Ubuntu_Sans({
   subsets: ["latin"],
@@ -24,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
       <body
         suppressHydrationWarning
         className={cn("min-h-screen bg-background font-sans antialiased", ubuntuSans.className)}

@@ -3,7 +3,8 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Github, Rocket } from 'lucide-react';
+import { Rocket } from 'lucide-react';
+import { GithubLogo } from '@phosphor-icons/react';
 import Link from 'next/link';
 
 export default function AboutPage() {
@@ -79,12 +80,15 @@ export default function AboutPage() {
               Submit your completed application by pushing it to a public GitHub repository. Include a <code>README.md</code> with setup instructions. Deployment is mandatory. Bonus points for additional features or self-hosting.
             </p>
             <div className="flex gap-4 flex-wrap">
-              <Button variant="default" asChild>
-                <Link href="https://github.com" target="_blank">
-                  <Github className="mr-2 h-4 w-4" />
-                  View Repository
-                </Link>
-              </Button>
+              <Button
+                variant="default"
+                render={
+                  <Link href="https://github.com" target="_blank">
+                    <GithubLogo className="mr-2 h-4 w-4" />
+                    View Repository
+                  </Link>
+                }
+              />
             </div>
           </CardContent>
         </Card>

@@ -1,6 +1,8 @@
 'use client'
 
 import * as React from 'react'
+import { useRouter } from 'next/navigation'
+import axios from 'axios'
 import {
   Dialog,
   DialogTrigger,
@@ -39,6 +41,7 @@ type Project = {
 }
 
 export default function DashboardPage() {
+  const router = useRouter()
   const [projects, setProjects] = React.useState<Project[]>([])
   const [loading, setLoading] = React.useState(true)
   const [newProjectName, setNewProjectName] = React.useState('')
@@ -48,45 +51,56 @@ export default function DashboardPage() {
 
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
 
+  // Client-side auth guard — secondary layer on top of middleware
+  React.useEffect(() => {
+    if (!token) {
+      router.replace('/sign-in?redirect_url=/dashboard')
+    }
+  }, [token, router])
+
+  const logout = () => {
+    localStorage.removeItem('token')
+    document.cookie = 'token=; path=/; max-age=0'
+    router.replace('/sign-in')
+  }
+
   const fetchProjects = async () => {
     try {
-      const res = await fetch('/api/projects', {
+      const res = await axios.get('/api/projects', {
         headers: { Authorization: `Bearer ${token}` },
       })
-      const data = await res.json()
-      setProjects(data)
-    } catch {
-      toast.error('Failed to load projects')
+      setProjects(res.data)
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        logout()
+      } else {
+        toast.error('Failed to load projects')
+      }
     } finally {
       setLoading(false)
     }
   }
 
   React.useEffect(() => {
-    fetchProjects()
+    if (token) fetchProjects()
   }, [])
 
   const handleCreateProject = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      const res = await fetch('/api/projects/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ name: newProjectName }),
-      })
-      if (!res.ok) {
-        const err = await res.json()
-        toast.error(err.error || 'Failed to create project')
-        return
-      }
+      await axios.post('/api/projects/create', 
+        { name: newProjectName },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
       toast.success('Project created')
       setNewProjectName('')
       fetchProjects()
-    } catch {
-      toast.error('Error creating project')
+    } catch (err: any) {
+      toast.error(err.response?.data?.error || 'Failed to create project')
     }
   }
 
@@ -94,24 +108,20 @@ export default function DashboardPage() {
     e.preventDefault()
     if (!activeProjectId) return
     try {
-      const res = await fetch(`/api/projects/${activeProjectId}/tasks`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ title: taskTitle, description: taskDescription }),
-      })
-      if (!res.ok) {
-        toast.error('Failed to add task')
-        return
-      }
+      await axios.post(`/api/projects/${activeProjectId}/tasks`,
+        { title: taskTitle, description: taskDescription },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
       toast.success('Task added')
       setTaskTitle('')
       setTaskDescription('')
       fetchProjects()
     } catch {
-      toast.error('Error adding task')
+      toast.error('Failed to add task')
     }
   }
 
@@ -121,41 +131,32 @@ export default function DashboardPage() {
     status: 'todo' | 'in-progress' | 'done'
   ) => {
     try {
-      const res = await fetch(`/api/projects/${projectId}/tasks/${taskId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ status }),
-      })
-      if (!res.ok) {
-        toast.error('Failed to update status')
-        return
-      }
+      await axios.patch(`/api/projects/${projectId}/tasks/${taskId}`,
+        { status },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
       toast.success('Status updated')
       fetchProjects()
     } catch {
-      toast.error('Update failed')
+      toast.error('Failed to update status')
     }
   }
 
   const deleteTask = async (projectId: string, taskId: string) => {
     try {
-      const res = await fetch(`/api/projects/${projectId}/tasks/${taskId}`, {
-        method: 'DELETE',
+      await axios.delete(`/api/projects/${projectId}/tasks/${taskId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
-      if (!res.ok) {
-        toast.error('Failed to delete task')
-        return
-      }
       toast.success('Task deleted')
       fetchProjects()
     } catch {
-      toast.error('Error deleting task')
+      toast.error('Failed to delete task')
     }
   }
 
@@ -165,11 +166,13 @@ export default function DashboardPage() {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Your Projects</h1>
           <Dialog>
-            <DialogTrigger asChild>
-              <Button>
-                <PlusCircle className="mr-2 h-4 w-4" /> New Project
-              </Button>
-            </DialogTrigger>
+            <DialogTrigger
+              render={
+                <Button>
+                  <PlusCircle className="mr-2 h-4 w-4" /> New Project
+                </Button>
+              }
+            />
             <DialogContent>
               <DialogTitle>Create New Project</DialogTitle>
               <form onSubmit={handleCreateProject} className="space-y-4">
@@ -251,15 +254,17 @@ export default function DashboardPage() {
                   )}
 
                   <Dialog>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className="w-full"
-                        onClick={() => setActiveProjectId(project._id)}
-                      >
-                        <PlusCircle className="mr-2 h-4 w-4" /> Add Task
-                      </Button>
-                    </DialogTrigger>
+                    <DialogTrigger
+                      render={
+                        <Button
+                          variant="outline"
+                          className="w-full"
+                          onClick={() => setActiveProjectId(project._id)}
+                        >
+                          <PlusCircle className="mr-2 h-4 w-4" /> Add Task
+                        </Button>
+                      }
+                    />
                     <DialogContent>
                       <DialogTitle>Add Task to {project.name}</DialogTitle>
                       <form onSubmit={handleAddTask} className="space-y-4">

@@ -1,21 +1,41 @@
-import { connectDB } from '@/lib/db'
+import { connectDB, db } from '@/lib/db'
 import { verifyToken } from '@/lib/auth'
-import Project from '@/lib/models/Project'
+import { projects } from '@/lib/db/schema'
 import { NextRequest, NextResponse } from 'next/server'
 import { JwtPayload } from 'jsonwebtoken'
+import { eq, count } from 'drizzle-orm'
 
 export async function POST(req: NextRequest) {
   await connectDB()
   const token = req.headers.get('authorization')?.split(' ')[1]
   const decoded = token && verifyToken(token)
-  if (!decoded) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!decoded || typeof decoded === 'string') {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
 
+  const userId = (decoded as JwtPayload).id
   const { name } = await req.json()
-  const count = await Project.countDocuments({ userId: (decoded as JwtPayload).id })
-  if (count >= 4) {
+
+  const countResult = await db
+    .select({ value: count() })
+    .from(projects)
+    .where(eq(projects.userId, userId))
+
+  const projectCount = countResult[0]?.value || 0
+  if (projectCount >= 4) {
     return NextResponse.json({ error: 'Max 4 projects allowed' }, { status: 400 })
   }
 
-  const project = await Project.create({ userId: (decoded as JwtPayload).id, name, tasks: [] })
-  return NextResponse.json(project, { status: 201 })
+  const newId = crypto.randomUUID()
+  await db.insert(projects).values({
+    id: newId,
+    userId,
+    name,
+  })
+
+  return NextResponse.json({
+    _id: newId,
+    name,
+    tasks: [],
+  }, { status: 201 })
 }

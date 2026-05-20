@@ -1,8 +1,9 @@
-import mongoose from 'mongoose';
+import { neon } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-http';
 
-const MONGO_URI = process.env.MONGO_URI!;
+const sql = neon(process.env.DATABASE_URL!);
+export const db = drizzle(sql);
 
 export async function connectDB() {
-  if (mongoose.connection.readyState >= 1) return;
-  return mongoose.connect(MONGO_URI);
+  return Promise.resolve();
 }
