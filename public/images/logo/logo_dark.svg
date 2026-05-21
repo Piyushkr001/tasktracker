@@ -3,19 +3,19 @@
 
   <!-- Icon mark -->
   <g transform="translate(32 28)">
-    <rect x="0" y="0" width="64" height="64" rx="18" fill="#2563EB"/>
+    <rect x="0" y="0" width="64" height="64" rx="18" fill="#1D4ED8"/>
     <path d="M20 33L28 41L45 23" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M18 50H46" stroke="#DBEAFE" stroke-width="4" stroke-linecap="round"/>
+    <path d="M18 50H46" stroke="#93C5FD" stroke-width="4" stroke-linecap="round"/>
     <circle cx="47" cy="17" r="7" fill="#38BDF8"/>
   </g>
 
   <!-- Brand text -->
-  <text x="112" y="67" font-family="Inter, Arial, sans-serif" font-size="38" font-weight="800" fill="#0F172A">
-    Task<tspan fill="#2563EB">Pilot</tspan>
+  <text x="112" y="67" font-family="Inter, Arial, sans-serif" font-size="38" font-weight="800" fill="#F8FAFC">
+    Task<tspan fill="#38BDF8">Pilot</tspan>
   </text>
 
   <!-- Tagline -->
-  <text x="115" y="90" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="500" fill="#64748B">
+  <text x="115" y="90" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="500" fill="#94A3B8">
     Plan smarter. Track faster.
   </text>
 </svg>

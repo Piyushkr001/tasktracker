@@ -67,7 +67,8 @@ export default function Navbar() {
 
           {/* ── Logo ── */}
           <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
-            <Image src="/images/logo/logo.svg" alt="Logo" width={180} height={180} className='h-16 w-auto' />
+            <Image src="/images/logo/logo.svg" alt="Logo" width={220} height={220} className='h-20 w-auto dark:hidden' />
+            <Image src="/images/logo/logo_dark.svg" alt="Logo" width={220} height={220} className='h-20 w-auto hidden dark:block' />
           </Link>
 
           {/* ── Desktop Nav Links ── */}
