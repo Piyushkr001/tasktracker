@@ -9,6 +9,7 @@ import { toast } from 'react-hot-toast'
 import axios from 'axios'
 import Script from 'next/script'
 import { Eye, EyeOff } from 'lucide-react'
+import Image from 'next/image'
 
 function SignInForm() {
   const router = useRouter()
@@ -112,16 +113,8 @@ function SignInForm() {
           <div className="absolute top-[40%] left-[20%] w-[200px] h-[200px] rounded-full bg-pink-500/10 blur-[80px] animate-pulse" style={{ animationDuration: '6s' }} />
 
           {/* Header */}
-          <div className="relative z-10 flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600 shadow-[0_0_15px_rgba(79,70,229,0.5)]">
-              <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-            </div>
-            <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
-              TaskTracker
-            </span>
-          </div>
+          <Image src="/images/logo/logo.svg" alt="Logo" width={200} height={200} className='rounded-lg dark:hidden' />
+          <Image src="/images/logo/logo_dark.svg" alt="Logo" width={200} height={200} className='rounded-lg hidden dark:block' />
 
           {/* Center Copy */}
           <div className="relative z-10 my-auto space-y-6">
